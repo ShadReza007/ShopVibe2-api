@@ -47,7 +47,7 @@ app.get('/cart',requireAuth,(req,res)=>res.render('cart'))
 app.use(authRoutes)
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port`,PORT)
+  console.log(`Server is running on port`,process.env.PORT)
 }).on('error', (err) => {
   console.error("Failed to start server:", err)
 })
