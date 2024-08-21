@@ -2,15 +2,20 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const corsOptions = require('./corsOptions')
 const ProductModel = require('./models/Product')
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
 const { requireAuth, checkUser } = require('./middleware/authMiddleware');
-const CartModel = require('./models/Cart')
 
 //middleware
 const app = express()
-app.use(cors())
+app.use( (req , res , next)=> {
+  console.log(req.method)
+  console.log(req.url)
+  next()
+})
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser());
 
@@ -20,30 +25,17 @@ mongoose.connect(process.env.MONG_URI)
   .catch(err => console.log("Could not connect", err))
 
 
-app.get('/',async(req, res) => {
-  const products = await ProductModel.find()
-  try {
-    return res.status(201).json({'prod':products})
-  }
-  catch(err){
-    console.log(err)
-   }
-})
+  
+  app.get('/',async(req, res) => {
+    const products = await ProductModel.find()
+    try {
+      return res.status(201).send({'prod':products})
+    }
+    catch(err){
+      console.log("Error fetching products",err)
+    }
+  })
 
-app.get('/cart',async(req,res)=>{
-  const items = await CartModel.find()
-  try{
-    return res.status(201).json({'items':items})
-  }
-  catch(err){
-    console.log(err)
-  }
-})
-
-
-
-app.get('*', checkUser);
-app.get('/cart',requireAuth,(req,res)=>res.render('cart'))
 app.use(authRoutes)
 
 app.listen(process.env.PORT, () => {
