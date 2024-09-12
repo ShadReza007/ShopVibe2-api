@@ -1,6 +1,7 @@
 const allowedOrigins = [
      'http://localhost:3000',
-     // 'https://shopvibe.onrender.com'
+     'http://localhost:3001',
+     'https://shopvibe.onrender.com'
 ]
 
 module.exports = allowedOrigins

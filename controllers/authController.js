@@ -4,32 +4,31 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const Product = require("../models/Product");
 
-// handle errors
+
 const handleErrors = (err) => {
   let errors = { email: '', password: '' };
 
-  // incorrect email
+ 
   if (err.message === 'incorrect email') {
     errors.email = 'That email is not registered';
   }
 
-  // incorrect password
+ 
   if (err.message === 'incorrect password') {
     errors.password = 'That password is incorrect';
   }
 
-  // duplicate email error
+ 
   if (err.code === 11000) {
     errors.email = 'that email is already registered';
     return errors;
   }
 
-  // validation errors
+
   if (err.message.includes('user validation failed')) {
-    // console.log(err);
+   
     Object.values(err.errors).forEach(({ properties }) => {
-      // console.log(val);
-      // console.log(properties);
+ 
       errors[properties.path] = properties.message;
     });
   }
@@ -37,7 +36,6 @@ const handleErrors = (err) => {
   return errors;
 }
 
-// create json web token
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
   return jwt.sign({ id }, 'net ninja secret', {
@@ -45,7 +43,6 @@ const createToken = (id) => {
   });
 };
 
-// controller actions
 module.exports.signup_post = async (req, res) => {
   const { email, password } = req.body;
 
@@ -113,22 +110,20 @@ module.exports.modify_patch = async (req, res) => {
 };
 
 module.exports.getuser_get = async (req, res) => {
-  const { email } = req.query; // Use req.query for GET request query parameters
+  const { email } = req.query;
   if (!email) {
     return res.status(400).send({ msg: "Email is required" });
   }
 
-  // Decode the email address
   const refinedMail = decodeURIComponent(email.replace('%40', '@'));
 
   try {
-    // Find user by decoded email
-    const user = await User.findOne({ email: refinedMail }); // Make sure 'email' is the correct field
+    const user = await User.findOne({ email: refinedMail }); 
     if (!user) {
       return res.status(404).send({ msg: "User not found" });
     }
 
-    res.status(200).send({ user: user._id }); // Respond with user ID
+    res.status(200).send({ user: user._id }); 
   } catch (err) {
     console.error(err);
     res.status(500).send({ msg: "Internal server error" });
@@ -137,20 +132,19 @@ module.exports.getuser_get = async (req, res) => {
 
 
 module.exports.getproduct_post = async (req, res) => {
-  const { id } = req.body; // Use req.query for GET request query parameters
+  const { id } = req.body; 
   if (!id) {
     return res.status(400).send({ msg: "Product ID is required" });
   }
 
   try {
-    // Find product by ID
-    const product = await Product.findOne({ id: id }); // Make sure 'id' is the correct field
+    const product = await Product.findOne({ id: id }); 
     if (!product) {
       return res.status(404).send({ msg: "Product not found" });
     }
-    // Convert ObjectId to string
+  
     const productid = product._id.toString();
-    res.status(200).send({ productid: productid }); // Respond with productid as string
+    res.status(200).send({ productid: productid });
   } catch (err) {
     console.error(err);
     res.status(500).send({ msg: "Internal server error" });

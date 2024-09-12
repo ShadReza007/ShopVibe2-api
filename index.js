@@ -6,7 +6,6 @@ const corsOptions = require('./corsOptions')
 const ProductModel = require('./models/Product')
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
-const { requireAuth, checkUser } = require('./middleware/authMiddleware');
 
 //middleware
 const app = express()
